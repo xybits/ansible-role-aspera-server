@@ -1,0 +1,21 @@
+---
+
+- name: install > Prerequisite Packages
+  yum:
+    name: "{{ aspera_prereq_packages }}"
+    state: present
+    update_cache: true
+
+- name: install > Aspera Package
+  yum:
+    name: "{{ aspera_package }}"
+    state: present
+
+- name: license > Aspera License
+  copy:
+    dest: /opt/aspera/etc/aspera-license
+    content: "{{ aspera_license_text }}"
+
+- name: verify > Package and License
+  shell: ascp -A
+  changed_when: false

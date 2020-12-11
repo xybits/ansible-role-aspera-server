@@ -1,0 +1,7 @@
+---
+
+- name: restart > Aspera Node Service
+  systemd:
+    state: restarted
+    name: "{{ item }}"
+  with_items: [ asperacentral, asperanoded ]

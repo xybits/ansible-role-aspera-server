@@ -1,0 +1,16 @@
+---
+
+- name: Preperation
+  include_tasks: prepare.yml
+
+- name: Aspera Installation
+  include_tasks: install.yml
+
+- name: Aspera Users
+  include_tasks: users.yml
+
+- name: Aspera Conf
+  include_tasks: asp_conf.yml
+
+- name: Restart
+  include_tasks: restart.yml
