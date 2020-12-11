@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<CONF version="2">
+    <central_server>
+        <port>40001</port>
+        <address>127.0.0.1</address>
+    </central_server>
+    <default>
+        <authorization>
+            <transfer>
+                <in>
+                    <value>deny</value>
+                </in>
+                <out>
+                    <value>deny</value>
+                </out>
+            </transfer>
+            <token>
+                <encryption_key>{{ aspera_token_encryption_key }}</encryption_key>
+            </token>
+        </authorization>
+        <file_system>
+            <access>
+                <paths>
+                    <path>
+                        <absolute>{{ aspera_global_data_dir }}</absolute>
+                        <dir_allowed>false</dir_allowed>
+                        <read_allowed>false</read_allowed>
+                        <write_allowed>false</write_allowed>
+                    </path>
+                </paths>
+            </access>
+        </file_system>
+    </default>
+    <aaa>
+        <realms>
+            <realm>
+                <users>
+                    <user>
+                        <name>{{ aspera_transfer_user_name }}</name>
+                        <file_system>
+                            <access>
+                                <paths>
+                                    <path>
+                                        <absolute>{{ aspera_data_dir }}</absolute>
+                                        <dir_allowed>true</dir_allowed>
+                                        <read_allowed>true</read_allowed>
+                                        <write_allowed>true</write_allowed>
+                                    </path>
+                                </paths>
+                            </access>
+                        </file_system>
+                        <authorization>
+                            <transfer>
+                                <in>
+                                    <value>token</value>
+                                </in>
+                                <out>
+                                    <value>token</value>
+                                </out>
+                            </transfer>
+                        </authorization>
+                        <transfer>
+                            <in>
+                                <bandwidth>
+                                    <flow>
+                                        <target_rate>
+                                            <default>100000</default>
+                                        </target_rate>
+                                    </flow>
+                                </bandwidth>
+                            </in>
+                            <out>
+                                <bandwidth>
+                                    <flow>
+                                        <target_rate>
+                                            <default>100000</default>
+                                        </target_rate>
+                                    </flow>
+                                </bandwidth>
+                            </out>
+                        </transfer>
+                    </user>
+                </users>
+            </realm>
+        </realms>
+    </aaa>
+    <server>
+        <ssh_host_key_fingerprint>{{ aspera_ssh_host_key_fingerprint }}</ssh_host_key_fingerprint>
+        <activity_logging>true</activity_logging>
+        <activity_event_logging>true</activity_event_logging>
+        <server_name>{{ aspera_server_name }}</server_name>
+        <http_port>{{ aspera_http_port }}</http_port>
+        <enable_http>true</enable_http>
+        <enable_https>false</enable_https>
+        <fasp_port>33001</fasp_port>
+        <ssh_port>22</ssh_port>
+    </server>
+</CONF>

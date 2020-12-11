@@ -1,0 +1,23 @@
+---
+
+- name: os > CentOS 7
+  assert:
+    that:
+      - ansible_distribution == "CentOS"
+      - ansible_distribution_major_version == "7"
+
+- name: yum > Package Facts
+  package_facts:
+    manager: rpm
+
+- name: selinux > Disable
+  selinux:
+    policy: targeted
+    state: disabled
+  when: "'selinux-policy' in ansible_facts.packages"
+
+- name: firewall > Stop
+  systemd:
+    name: firewalld
+    state: stopped
+  when: "'firewalld' in ansible_facts.packages"

@@ -1,0 +1,82 @@
+---
+
+- name: group > Aspera Transfer User
+  group:
+    name: "{{ aspera_transfer_user_group }}"
+    state: present
+
+- name: user > Aspera Transfer User
+  user:
+    name: "{{ aspera_transfer_user_name }}"
+    group: "{{ aspera_transfer_user_group }}"
+    groups: ~
+    append: false
+    shell: /usr/bin/aspshell
+    state: present
+
+- name: ssh > Aspera Transfer User .ssh Dir
+  file:
+    path: ~/.ssh
+    state: directory
+    mode: 0700
+  become: true
+  become_user: "{{ aspera_transfer_user_name }}"
+
+- name: auth > Aspera Transfer User
+  file:
+    dest: ~/.ssh/authorized_keys
+    state: touch
+    mode: 0600
+    access_time: preserve
+    modification_time: preserve
+  become: true
+  become_user: "{{ aspera_transfer_user_name }}"
+
+- name: token > Aspera Transfer User
+  copy:
+    src: /opt/aspera/var/aspera_tokenauth_id_rsa.pub
+    dest: ~/.ssh/authorized_keys
+    remote_src: yes
+  become: true
+  become_user: "{{ aspera_transfer_user_name }}"
+
+- name: auth > Apache Authentication File
+  file:
+    path: /opt/aspera/etc/webpasswd
+    state: touch
+    group: aspadmins
+    owner: asperadaemon
+    mode: 0755
+    access_time: preserve
+    modification_time: preserve
+
+- name: cred > Aspera Transfer User Cred Check
+  shell: htpasswd -vb /opt/aspera/etc/webpasswd "{{ aspera_transfer_user_name }}" "{{ aspera_transfer_user_pwd }}"
+  register: htpasswd_pwd_check
+  changed_when: htpasswd_pwd_check.rc != 0
+  failed_when: false
+  no_log: true
+
+- name: cred > Aspera Transfer User Cred Update
+  shell: htpasswd -b /opt/aspera/etc/webpasswd "{{ aspera_transfer_user_name }}" "{{ aspera_transfer_user_pwd }}"
+  when: htpasswd_pwd_check.rc != 0
+  no_log: true
+
+- name: user > Aspera Node API User Add
+  shell: |
+    /opt/aspera/bin/asnodeadmin                 \
+      --add                                     \
+      --user  "{{ aspera_node_api_user_name }}" \
+      --pwd   "{{ aspera_node_api_user_pwd  }}" \
+      --xuser "{{ aspera_transfer_user_name }}"
+  failed_when: false
+  no_log: true
+
+- name: user > Aspera Node API User Update
+  shell: |
+    /opt/aspera/bin/asnodeadmin                 \
+      --modify                                  \
+      --user  "{{ aspera_node_api_user_name }}" \
+      --pwd   "{{ aspera_node_api_user_pwd  }}" \
+      --xuser "{{ aspera_transfer_user_name }}"
+  no_log: true

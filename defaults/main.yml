@@ -1,0 +1,25 @@
+---
+
+# - Install -
+aspera_prereq_packages:
+  - httpd-tools
+  - perl-Data-Dumper
+  - perl-Digest-MD5
+  - perl-Digest-SHA
+  - perl-Digest-SHA1
+
+aspera_package: ~
+aspera_license_text: ~
+
+aspera_transfer_user_group: aspxfergroup
+aspera_transfer_user_name: xferuser
+aspera_transfer_user_pwd: xfer123
+
+aspera_node_api_user_name: nodeuser
+aspera_node_api_user_pwd: node123
+
+aspera_global_data_dir: /data/__global__
+aspera_data_dir: /data/shared
+
+aspera_server_name: "{{ inventory_hostname }}"
+aspera_http_port: 9091

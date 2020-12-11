@@ -1,0 +1,39 @@
+---
+
+- name: conf > Aspera Transer Global Dir
+  file:
+    path: "{{ aspera_global_data_dir }}"
+    group: root
+    owner: root
+    mode: 0755
+    recurse: yes
+    state: directory
+
+- name: conf > Aspera Transer Shared Dir
+  file:
+    path: "{{ aspera_data_dir }}"
+    group: "{{ aspera_transfer_user_group }}"
+    owner: root
+    mode: 0775
+    recurse: yes
+    state: directory
+
+- name: shasum > Aspera Server Host Key
+  shell: cat /etc/ssh/ssh_host_rsa_key.pub | awk '{print $2}' | base64 - | shasum | awk '{print $1}'
+  register: aspera_ssh_host_key_fingerprint_cmd
+  changed_when: false
+
+- name: shasum > Aspera Server Token Encryption Key
+  shell: echo "{{ aspera_ssh_host_key_fingerprint_cmd.stdout }}" | shasum | awk '{print $1}'
+  register: aspera_token_encryption_key_cmd
+  changed_when: false
+
+- name: conf > Aspera Server SSH Key Variables
+  set_fact:
+    aspera_ssh_host_key_fingerprint: "{{ aspera_ssh_host_key_fingerprint_cmd.stdout }}"
+    aspera_token_encryption_key: "{{ aspera_token_encryption_key_cmd.stdout }}"
+
+- name: conf > Aspera Conf
+  template:
+    src: aspera.conf.j2
+    dest: /opt/aspera/etc/aspera.conf
