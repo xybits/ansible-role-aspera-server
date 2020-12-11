@@ -119,7 +119,7 @@ aspera_server_name: my-aspera.subdomain.domain.root
 
 # - Install -
 # Run from a console
-:% ansible-playbook --inventory ${inventory_file} --extra-vars @ ${extra_vars_file} ${playbook_file}
+:% ansible-playbook --inventory ${inventory_file} --extra-vars @${extra_vars_file} ${playbook_file}
 
 # - Test -
 # Run from a console
@@ -153,7 +153,7 @@ aspera_http_port: 8891
 
 # - Install -
 # Run from a console
-:% ansible-playbook --inventory ${inventory_file} --extra-vars @ ${extra_vars_file} ${playbook_file}
+:% ansible-playbook --inventory ${inventory_file} --extra-vars @${extra_vars_file} ${playbook_file}
 
 # - Test -
 # Run from a console
